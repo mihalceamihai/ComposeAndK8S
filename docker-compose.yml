@@ -1,0 +1,28 @@
+version: '2'
+services:
+  db:
+    image: mihalceamihai/mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: "automosmobile"
+      MYSQL_USER: "mosu"
+      MYSQL_PASSWORD: "123"
+      MYSQL_ROOT_PASSWORD: "123"
+    volumes:
+      - ./:/dbinit.d
+  app:
+    image: mihalceamihai/apache
+    ports:
+      - "8081:80"
+    environment:
+      MYSQL_HOST: "db"
+      MYSQL_USER: "mosu"
+      MYSQL_PASS: "123"
+      MYSQL_DB: "automosmobile"
+    volumes:
+      - ./apache/tema_web/:/app/public  
+    links:
+    - db:mysql
+    depends_on:
+    - db

@@ -1,0 +1,73 @@
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: automosmobile
+spec:
+  selector:
+    app: automos
+  ports:
+    - protocol: "TCP"
+      # Port accessible inside cluster
+      port: 8080
+      # Port to forward to inside the pod
+      targetPort: 80
+      # Port accessible outside cluster
+      nodePort: 30002
+  type: LoadBalancer
+ 
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: automos
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: automos
+    spec:
+      containers:
+        - name: automos
+          image: mihalceamihai/apache
+          ports:
+            - containerPort: 8080
+          env:
+          - name: MYSQL_HOST
+            value: "db"
+          - name: MYSQL_USER
+            value: "mosu"
+          - name: MYSQL_PASS
+            value: "123"
+          - name: MYSQL_DB
+            value: "automosmobile"
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: db
+spec:
+  selector:
+    app: db
+  ports:
+    - protocol: "TCP"
+      # Port accessible inside cluster
+      port: 3306
+      # Port to forward to inside the pod
+      targetPort: 3306
+      # Port accessible outside cluster
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: db
+  labels:
+    app: db
+spec:
+  containers:
+    - name: db
+      image: mihalceamihai/mysql
+      ports:
+        - containerPort: 3306
