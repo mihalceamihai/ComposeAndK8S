@@ -8,11 +8,8 @@ spec:
     app: automos
   ports:
     - protocol: "TCP"
-      # Port accessible inside cluster
       port: 8080
-      # Port to forward to inside the pod
       targetPort: 80
-      # Port accessible outside cluster
       nodePort: 30002
   type: LoadBalancer
  
@@ -53,11 +50,8 @@ spec:
     app: db
   ports:
     - protocol: "TCP"
-      # Port accessible inside cluster
       port: 3306
-      # Port to forward to inside the pod
       targetPort: 3306
-      # Port accessible outside cluster
 ---
 apiVersion: v1
 kind: Pod
